@@ -1,0 +1,55 @@
+{% extends 'product/base.html' %}
+{% load humanize %}
+
+{% block title %}Thống kê sản phẩm{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📊 Thống kê sản phẩm theo người dùng</h2>
+
+<table class="table table-bordered">
+     <thead class="table-dark">
+          <tr>
+               <th>Username</th>
+               <th>Số sản phẩm</th>
+          </tr>
+     </thead>
+     <tbody>
+          {% for user in stats %}
+          <tr>
+               <td>{{ user.username }}</td>
+               <td>{{ user.product_count }}</td>
+          </tr>
+          {% endfor %}
+     </tbody>
+</table>
+
+<canvas id="productChart" height="120"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+     const ctx = document.getElementById('productChart').getContext('2d');
+     const chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+               labels: [{% for u in stats %}'{{ u.username }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+     datasets: [{
+          label: 'Số sản phẩm',
+          data: [{% for u in stats %}{{ u.product_count }}{% if not forloop.last %}, {% endif %} {% endfor %}],
+     backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+               borderWidth: 1
+            }]
+        },
+     options: {
+          scales: {
+               y: {
+                    beginAtZero: true,
+                         ticks: {
+                         precision: 0
+                    }
+               }
+          }
+     }
+    });
+</script>
+{% endblock %}
