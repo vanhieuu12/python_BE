@@ -1,0 +1,73 @@
+{% extends 'product/base.html' %}
+{% block title %}Giỏ hàng{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+     <h2 class="mb-4">🛒 Giỏ hàng</h2>
+
+     {% if cart %}
+     <!-- Form cập nhật số lượng -->
+     <form method="post" action="{% url 'update_cart' %}">
+          {% csrf_token %}
+
+          <table class="table table-bordered align-middle">
+               <thead class="table-light">
+                    <tr>
+                         <th>Sản phẩm</th>
+                         <th class="text-center">Số lượng</th>
+                         <th>Giá</th>
+                         <th>Thành tiền</th>
+                         <th class="text-center">Hành động</th>
+                    </tr>
+               </thead>
+               <tbody>
+                    {% for item in cart %}
+                    <tr>
+                         <td>
+                              <strong>{{ item.product.name }}</strong><br>
+                              <small class="text-muted">
+                                   {{ item.product.category.name|default:"Không có danh mục" }}
+                              </small>
+                         </td>
+
+                         <td class="text-center">
+                              <input type="number" name="quantity_{{ item.product.id }}" value="{{ item.quantity }}"
+                                   min="0" class="form-control form-control-sm text-center" style="width: 80px;">
+                         </td>
+
+                         <td>{{ item.price|floatformat:0 }}₫</td>
+                         <td>{{ item.total_price|floatformat:0 }}₫</td>
+
+                         <td class="text-center">
+                              <!-- ✅ Form xoá RIÊNG biệt -->
+                              <form method="post" action="{% url 'remove_from_cart' item.product.id %}"
+                                   style="display:inline;" onsubmit="return confirm('Xoá sản phẩm này khỏi giỏ?')">
+                                   {% csrf_token %}
+                                   <button type="submit" class="btn btn-sm btn-danger">❌</button>
+                              </form>
+                         </td>
+                    </tr>
+                    {% endfor %}
+               </tbody>
+               <tfoot>
+                    <tr>
+                         <td colspan="3" class="text-end"><strong>Tổng tiền:</strong></td>
+                         <td colspan="2"><strong>{{ cart.get_total_price|floatformat:0 }}₫</strong></td>
+                    </tr>
+               </tfoot>
+          </table>
+
+          <div class="text-end">
+               <button type="submit" class="btn btn-warning">🔁 Cập nhật giỏ hàng</button>
+               <a href="{% url 'product_list' %}" class="btn btn-secondary">⬅️ Tiếp tục mua hàng</a>
+               <a href="{% url 'checkout' %}" class="btn btn-primary">🧾 Thanh toán</a>
+          </div>
+     </form>
+
+     {% else %}
+     <div class="alert alert-info">
+          🛒 Giỏ hàng của bạn đang trống. <a href="{% url 'product_list' %}">Tiếp tục mua sắm</a>.
+     </div>
+     {% endif %}
+</div>
+{% endblock %}

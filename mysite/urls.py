@@ -6,8 +6,10 @@ from product import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.product_list, name='home'),  # <--- Dòng thêm để root URL hiển thị sản phẩm
     path('products/', include('product.urls')),  
     path('stats/', views.product_stats, name='product_stats')
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

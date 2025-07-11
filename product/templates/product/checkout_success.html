@@ -1,0 +1,29 @@
+{% extends 'product/base.html' %}
+{% block title %}Cảm ơn{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+     <div class="text-center">
+          <h2 class="text-success">🎉 Đặt hàng thành công!</h2>
+          <p class="fs-5">Cảm ơn <strong>{{ order.name }}</strong> đã đặt hàng.</p>
+          <p class="fs-6">📍 Địa chỉ giao hàng: <strong>{{ order.address }}</strong></p>
+          <a href="{% url 'product_list' %}" class="btn btn-outline-primary mt-3">⬅️ Quay về cửa hàng</a>
+     </div>
+
+     <div class="mt-5">
+          <h4 class="text-muted">🛒 Sản phẩm trong đơn hàng:</h4>
+          <ul class="list-group rounded-3 shadow-sm">
+               {% for item in items %}
+               <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                         {{ item.product.name }} <small class="text-muted">(x{{ item.quantity }})</small>
+                    </div>
+                    <span class="fw-semibold">{{ item.price|floatformat:0 }}₫</span>
+                    <p><strong>Tổng tiền:</strong> {{ order.get_total|floatformat:0 }}₫</p>
+
+               </li>
+               {% endfor %}
+          </ul>
+     </div>
+</div>
+{% endblock %}

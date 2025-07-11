@@ -1,10 +1,39 @@
 {% extends 'product/base.html' %}
+{% load form_filters %}
+
 {% block title %}Form sản phẩm{% endblock %}
 {% block content %}
-<h2>Form sản phẩm</h2>
-<form method="post" enctype="multipart/form-data">
-     {% csrf_token %}
-     {{ form.as_p }}
-     <button type="submit" class="btn btn-primary">Lưu</button>
-</form> 
+<div class="container mt-4">
+     <h2 class="mb-4">📝 Thông tin sản phẩm</h2>
+     <form method="post" enctype="multipart/form-data" class="card shadow p-4 border-0">
+          {% csrf_token %}
+
+          <div class="mb-3">
+               <label for="{{ form.name.id_for_label }}" class="form-label">Tên sản phẩm</label>
+               {{ form.name|add_class:"form-control" }}
+          </div>
+
+          <div class="mb-3">
+               <label for="{{ form.price.id_for_label }}" class="form-label">Giá bán</label>
+               {{ form.price|add_class:"form-control" }}
+          </div>
+
+          <div class="mb-3">
+               <label for="{{ form.description.id_for_label }}" class="form-label">Mô tả</label>
+               {{ form.description|add_class:"form-control" }}
+          </div>
+
+          <div class="mb-3">
+               <label for="{{ form.category.id_for_label }}" class="form-label">Danh mục</label>
+               {{ form.category|add_class:"form-select" }}
+          </div>
+
+          <div class="mb-3">
+               <label for="{{ form.image.id_for_label }}" class="form-label">Hình ảnh</label>
+               {{ form.image|add_class:"form-control" }}
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">💾 Lưu sản phẩm</button>
+     </form>
+</div>
 {% endblock %}

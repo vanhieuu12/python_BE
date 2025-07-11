@@ -1,0 +1,27 @@
+<h3>Lịch sử đơn hàng của bạn</h3>
+<table class="table">
+     <thead>
+          <tr>
+               <th>#</th>
+               <th>Ngày đặt</th>
+               <th>Địa chỉ</th>
+               <th>Tổng tiền</th>
+          </tr>
+     </thead>
+     <tbody>
+          {% for order in orders %}
+          <tr>
+               <td>{{ forloop.counter }}</td>
+               <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+               <td>{{ order.address }}</td>
+               <td>
+                    {{ order.items.all|map:"total" }} <!-- hoặc tự tính nếu có hàm get_total -->
+               </td>
+          </tr>
+          {% empty %}
+          <tr>
+               <td colspan="4">Chưa có đơn hàng nào.</td>
+          </tr>
+          {% endfor %}
+     </tbody>
+</table>

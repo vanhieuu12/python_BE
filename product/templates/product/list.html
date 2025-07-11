@@ -1,50 +1,81 @@
 {% extends 'product/base.html' %}
+{% load currency %}
+
 {% block title %}Danh sách sản phẩm{% endblock %}
 
 {% block content %}
 <h2>Danh sách sản phẩm</h2>
-<a href="{% url 'product_create' %}" class="btn btn-primary mb-3">+ Thêm sản phẩm</a>
-
-<form method="get" class="mb-4">
-     <input type="text" name="q" placeholder="Tìm theo tên sản phẩm..." class="form-control"
-          value="{{ request.GET.q }}">
-</form>
 {% if user.is_superuser %}
-<a href="{% url 'export_products_csv' %}" class="btn btn-success mb-3">📥 Xuất CSV</a>
+<div class="text-end mb-3">
+     <a href="{% url 'export_products_csv' %}" class="btn btn-success">📥 Xuất CSV</a>
+     <a href="{% url 'export_products_excel' %}" class="btn btn-outline-success">📤 Xuất Excel</a>
+
+</div>
 {% endif %}
 
-<div class="row">
+
+{% if request.user.is_superuser %}
+<a href="{% url 'product_create' %}" class="btn btn-success mb-3">➕ Thêm sản phẩm</a>
+{% endif %}
+
+<form method="get" class="d-flex gap-2 mb-4">
+     <input type="text" name="q" class="form-control" placeholder="🔍 Tìm sản phẩm..." value="{{ request.GET.q }}">
+     <input type="text" name="category" class="form-control" placeholder="📂 Danh mục..."
+          value="{{ request.GET.category }}">
+     <button type="submit" class="btn btn-outline-primary">Lọc</button>
+</form>
+
+<div class="row row-cols-2 row-cols-md-4 g-4">
      {% for product in products %}
-     <div class="col-md-4 mb-4">
-          <div class="card h-100">
-               {% if product.image %}
-               <img src="{{ product.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;"
-                    alt="{{ product.name }}">
-               {% else %}
-               <div class="card-img-top bg-light text-center p-5 text-muted">Không có ảnh</div>
-               {% endif %}
-               <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">Giá: {{ product.price }}đ</p>
-                    <p class="card-text"><small class="text-muted">Người tạo: {{ product.user.username }}</small></p>
-               </div>
-               <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
-                    {% if request.user == product.user or request.user.is_superuser %}
-                    <a href="{% url 'product_update' product.pk %}" class="btn btn-sm btn-warning">Sửa</a>
-                    <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-danger">Xoá</a>
+     <div class="col">
+          <div class="card h-100 border-0 shadow-sm position-relative">
+               <!-- Ảnh sản phẩm -->
+               <a href="{% url 'product_detail' product.pk %}">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}"
+                         style="height: 200px; object-fit: contain;">
                     {% else %}
-                    <span class="text-muted">Không có quyền</span>
+                    <div class="bg-light text-center text-muted py-5">Không có ảnh</div>
                     {% endif %}
-                    
+               </a>
+
+               <!-- Thông tin sản phẩm -->
+               <div class="card-body px-3">
+                    <h6 class="card-title fw-bold">
+                         <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
+                              {{ product.name }}
+                         </a>
+                    </h6>
+
+                    <p class="text-danger fw-bold">{{ product.price|currency_vnd }}</p>
+
+
+                    <p class="text-muted mb-0" style="font-size: 14px;">
+                         {{ product.category.name|default:"Không có danh mục" }}
+                    </p>
                </div>
+
+               <!-- Nút mua / quyền -->
+               <div class="card-footer bg-white border-0 px-3 pb-3">
+                    {% if request.user.is_superuser %}
+                    <div class="d-flex justify-content-between">
+                         <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">🛒 Thêm vào giỏ</a>
+                         <a href="{% url 'product_update' product.pk %}" class="btn btn-sm btn-outline-primary">Sửa</a>
+                         <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">Xoá</a>
+                    </div>
+                    {% else %}
+                    <div class="d-flex justify-content-between">
+                         <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary w-100">🛒 Thêm vào giỏ</a>
+                    </div>
+                    {% endif %}
+               </div>
+               
           </div>
-     </div>
-     {% empty %}
-     <div class="col-12">
-          <p>Không tìm thấy sản phẩm nào.</p>
      </div>
      {% endfor %}
 </div>
+ 
+ 
 
 <nav>
      <ul class="pagination justify-content-center">

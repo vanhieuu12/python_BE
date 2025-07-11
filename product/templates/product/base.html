@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
      <meta charset="UTF-8">
@@ -35,32 +35,53 @@
 </head>
 
 <body>
+     <!-- Navbar -->
      <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-          <a class="navbar-brand fw-bold" href="{% url 'product_list' %}">Quản lý SP</a>
+          <a class="navbar-brand fw-bold" href="{% url 'product_list' %}">🛍️ WEBSITE THƯƠNG MẠI ĐIỆN TỬ</a>
           <div class="ms-auto d-flex align-items-center">
                {% if user.is_authenticated %}
                <span class="text-white me-3">👋 Xin chào, <strong>{{ user.username }}</strong></span>
+
+               <!-- Giỏ hàng -->
+               <a href="{% url 'view_cart' %}" class="btn btn-outline-warning btn-sm me-2">🛒 Giỏ hàng</a>
+
+               <!-- Nút thống kê chỉ hiển thị cho superuser -->
+               {% if user.is_superuser %}
+               <a href="{% url 'product_stats' %}" class="btn btn-outline-info btn-sm me-2">📊 Thống kê</a>
+               {% endif %}
+
+               <!-- Logout -->
                <form method="post" action="{% url 'logout' %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-light btn-sm">Đăng xuất</button>
                </form>
-               {% if user.is_superuser %}
-               <a href="{% url 'product_stats' %}" class="btn btn-outline-info btn-sm ms-2">📊 Thống kê</a>
-               {% endif %}
-
                {% else %}
-               <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Đăng nhập</a>
+               <!-- Chưa đăng nhập -->
+               <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Đăng nhập</a>
                <a href="{% url 'register' %}" class="btn btn-outline-light btn-sm">Đăng ký</a>
                {% endif %}
           </div>
      </nav>
 
+     <!-- Flash messages -->
+     <div class="container mt-2">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-center">
+               {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+     </div>
+
+     <!-- Main content -->
      <div class="container mt-4">
           {% block content %}
           <!-- Nội dung sẽ hiển thị ở đây -->
           {% endblock %}
      </div>
 
+     <!-- Footer -->
      <footer>
           <p>&copy; 2025 Quản lý sản phẩm | Powered by Django + Bootstrap</p>
      </footer>
