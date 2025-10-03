@@ -10,7 +10,7 @@ urlpatterns = [
     path('create/', views.product_create, name='product_create'),
     path('update/<int:pk>/', views.product_update, name='product_update'),
     path('delete/<int:pk>/', views.product_delete, name='product_delete'),
-    path('products/<int:pk>/', views.product_detail, name='product_detail'),
+    path('<int:pk>/', views.product_detail, name='product_detail'),
 
 
     #auth

@@ -17,8 +17,16 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # ✅ Cấu hình bảo mật
 SECRET_KEY = env("SECRET_KEY")
-DEBUG = env("DEBUG")
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+# DEBUG = env("DEBUG")
+# ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+
+
+DEBUG = False
+ALLOWED_HOSTS = ['*']  # tạm thời, Render sẽ tự bind host
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_ROOT = BASE_DIR / 'mediafiles'
+
+
 
 # ✅ Media files
 MEDIA_URL = '/media/'
@@ -51,6 +59,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 ROOT_URLCONF = 'mysite.urls'
 

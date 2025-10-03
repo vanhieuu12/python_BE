@@ -24,6 +24,9 @@ from .forms import CheckoutForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import Order
+from openpyxl.utils import get_column_letter
+from .models import Product
+
 
 
 @login_required
@@ -114,42 +117,59 @@ def register(request):
 
 
 @login_required
+# --- Export CSV ---
 def export_products_csv(request):
-    if not request.user.is_superuser:
-        return HttpResponse("Chỉ admin được phép xuất dữ liệu.", status=403)
-
-    response = HttpResponse(content_type='text/csv')
+    # Sử dụng encoding='utf-8-sig' để Excel nhận tiếng Việt
+    response = HttpResponse(
+        content_type='text/csv; charset=utf-8-sig'
+    )
     response['Content-Disposition'] = 'attachment; filename="products.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Tên sản phẩm', 'Giá', 'Người tạo', 'Mô tả'])
+    writer.writerow(['Tên', 'Giá', 'Người tạo', 'Mô tả'])  # header
 
-    for product in Product.objects.all():
-        writer.writerow([product.name, product.price, product.user.username, product.description])
+    products = Product.objects.all()
+    for p in products:
+        writer.writerow([
+            p.name,
+            float(p.price),
+            p.user.username if p.user else "Không có người tạo",
+            p.description
+        ])
 
     return response
-@login_required
-def export_products_excel(request):
-    if not request.user.is_superuser:
-        return HttpResponse("Chỉ admin được phép xuất dữ liệu.", status=403)
 
+
+# --- Export Excel ---
+def export_products_excel(request):
     wb = Workbook()
     ws = wb.active
     ws.title = "Products"
 
-    ws.append(['Tên sản phẩm', 'Giá', 'Người tạo', 'Mô tả'])
-    for p in Product.objects.all():
-        ws.append([p.name, float(p.price), p.user.username, p.description])
+    # Header
+    ws.append(['Tên', 'Giá', 'Người tạo', 'Mô tả'])
 
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="products.xlsx"'
+    products = Product.objects.all()
+    for p in products:
+        ws.append([
+            p.name,
+            float(p.price),
+            p.user.username if p.user else "Không có người tạo",
+            p.description
+        ])
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=products.xlsx'
     wb.save(response)
     return response
 
 @login_required
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    return render(request, 'product/detail.html', {'product': product})
+    images = product.images.all()   # lấy tất cả ảnh gallery
+    return render(request, 'product/detail.html', {'product': product, 'images': images})
 
 
 def add_to_cart(request, product_id):
@@ -253,3 +273,4 @@ def clear_cart(request):
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'product/order_history.html', {'orders': orders})
+

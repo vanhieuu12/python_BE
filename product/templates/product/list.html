@@ -27,52 +27,48 @@
 
 <div class="row row-cols-2 row-cols-md-4 g-4">
      {% for product in products %}
-     <div class="col">
-          <div class="card h-100 border-0 shadow-sm position-relative">
-               <!-- Ảnh sản phẩm -->
-               <a href="{% url 'product_detail' product.pk %}">
-                    {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}"
-                         style="height: 200px; object-fit: contain;">
-                    {% else %}
-                    <div class="bg-light text-center text-muted py-5">Không có ảnh</div>
-                    {% endif %}
-               </a>
+<div class="col">
+    <div class="card h-100 border-0 shadow-sm position-relative">
+        <a href="{% url 'product_detail' product.pk %}">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}"
+                 style="height: 200px; object-fit: contain;">
+            {% else %}
+            <div class="bg-light text-center text-muted py-5">Không có ảnh</div>
+            {% endif %}
+        </a>
 
-               <!-- Thông tin sản phẩm -->
-               <div class="card-body px-3">
-                    <h6 class="card-title fw-bold">
-                         <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
-                              {{ product.name }}
-                         </a>
-                    </h6>
+        <div class="card-body px-3">
+            <h6 class="card-title fw-bold">
+                <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
+                    {{ product.name }}
+                </a>
+            </h6>
 
-                    <p class="text-danger fw-bold">{{ product.price|currency_vnd }}</p>
+            <p class="text-danger fw-bold">{{ product.price|currency_vnd }}</p>
 
+            <p class="text-muted mb-0" style="font-size: 14px;">
+                {{ product.category.name|default:"Không có danh mục" }}
+            </p>
+        </div>
 
-                    <p class="text-muted mb-0" style="font-size: 14px;">
-                         {{ product.category.name|default:"Không có danh mục" }}
-                    </p>
-               </div>
+        <div class="card-footer bg-white border-0 px-3 pb-3">
+            {% if request.user.is_superuser %}
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">🛒 Thêm vào giỏ</a>
+                <a href="{% url 'product_update' product.pk %}" class="btn btn-sm btn-outline-primary">Sửa</a>
+                <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">Xoá</a>
+            </div>
+            {% else %}
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary w-100">🛒 Thêm vào giỏ</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}
 
-               <!-- Nút mua / quyền -->
-               <div class="card-footer bg-white border-0 px-3 pb-3">
-                    {% if request.user.is_superuser %}
-                    <div class="d-flex justify-content-between">
-                         <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary">🛒 Thêm vào giỏ</a>
-                         <a href="{% url 'product_update' product.pk %}" class="btn btn-sm btn-outline-primary">Sửa</a>
-                         <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">Xoá</a>
-                    </div>
-                    {% else %}
-                    <div class="d-flex justify-content-between">
-                         <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-primary w-100">🛒 Thêm vào giỏ</a>
-                    </div>
-                    {% endif %}
-               </div>
-               
-          </div>
-     </div>
-     {% endfor %}
 </div>
  
  
