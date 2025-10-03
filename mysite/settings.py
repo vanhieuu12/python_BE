@@ -24,7 +24,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
 
 # Nếu deploy thì ALLOWED_HOSTS = ['*'] để Render tự bind
 if not DEBUG:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = ["python-be-1.onrender.com"]
 
 # Static
 STATIC_URL = "/static/"
